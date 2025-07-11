@@ -54,6 +54,6 @@ export const useTopPlayed = () => {
   return useQuery({
     queryKey: ["topPlayed"],
     queryFn: getTopPlayed,
-    staleTime: 1000 * 60 * 3,
+    staleTime: 1000 * 60 * 1,
   });
 };

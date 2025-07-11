@@ -147,7 +147,7 @@ export default function ProfilePage() {
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={styles.statBoxNumber}>{Math.floor((userStats?.watchTime || 0) / 60)}</Text>
-            <Text style={styles.statBoxLabel}>Minutes This Week</Text>
+            <Text style={styles.statBoxLabel}>Minutes Wathtime</Text>
           </View>
           <View style={styles.streakContent}>
             <Flame size={24} color="#FF6B6B" />
@@ -412,6 +412,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   statBoxLabel: {
+    textAlign: 'center',
     fontSize: 14,
     color: '#888888',
   },

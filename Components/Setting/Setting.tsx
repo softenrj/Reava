@@ -151,7 +151,6 @@ export default function SettingsScreen() {
                 </YStack>
 
 
-                {/* Google API Key for Premium */}
                 {/* <YStack marginBottom={40} gap={16}>
                 <Text fontWeight="700" fontSize={20}>Premium Access</Text>
                 <Text fontSize={14} color="#666">

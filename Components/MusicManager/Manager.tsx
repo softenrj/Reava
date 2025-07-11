@@ -38,7 +38,7 @@ export default function Manager() {
       </XStack>
 
       <Stack paddingTop={8} gap={6}>
-        {music && music.map((item) => (
+        {music && Array.isArray(music) && music.map((item) => (
           <View
             key={item._id}
             borderWidth={1}

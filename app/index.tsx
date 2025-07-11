@@ -44,7 +44,8 @@ export default function Index() {
 
 
   React.useEffect(() => {
-    if (myMusicList) {
+    if (myMusicList && Array.isArray(myMusicList) && !isLoading) {
+      console.log(myMusicList)
       dispatch(setMusic(myMusicList))
       dispatch(setPlaylist({ list: myMusicList, name: "myMusic" }))
     }
