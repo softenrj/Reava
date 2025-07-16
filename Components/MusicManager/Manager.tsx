@@ -21,8 +21,7 @@ export default function Manager() {
   const [addMusic, setAddMusicOpen] = useState<boolean>(false)
   const [editMusic, setEditMusic] = useState<boolean>(false)
   const [editMusicData, setEditMusicData] = useState<IMusic | null>(null)
-
-  const music = useAppSelector(state => state.muiscSlice)
+const { data: music, isLoading, error } = useMyMusic();
 
   const handleMusicEdit = (music: IMusic) => {
     setEditMusicData(music)
