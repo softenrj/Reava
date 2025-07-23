@@ -65,18 +65,18 @@ export default function MusicBar({ toggle }: { toggle: (type: string) => void })
         animationStyle,
         {
           position: 'absolute',
-          bottom: 2,
+          bottom: 4,
           left: 0,
           right: 0,
           width: '100%',
         },
       ]}
     >
-      <View backgroundColor="black" borderRadius="$8" padding="$2">
+      <View backgroundColor="#00011bff" borderRadius="$8" padding="10">
         {currentplaylist.list.length > 0 && (
           <PagerView
             ref={pagerRef}
-            style={{ width: '100%', height: 60 }}
+            style={{ width: '100%', height: 65 }}
             onPageSelected={(e) => {
               const selectedIndex = e.nativeEvent.position;
               const selectedTrack = currentplaylist.list[selectedIndex];

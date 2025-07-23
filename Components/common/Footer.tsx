@@ -7,14 +7,12 @@ export default function Footer() {
   return (
     <View
       borderTopWidth={1}
-      borderTopColor="#e1e2e3"
-      paddingVertical={'$2'}
+      borderTopColor="#e1e2e38c"
       alignItems="center"
       justifyContent="center"
-      marginHorizontal={32}
-      marginTop={12}
+      marginHorizontal={48}
     >
-      <Text fontSize={14} color="#555" marginBottom={'$3'}>
+      <Text fontSize={14} color="#0000008d" marginBottom={'$3'}>
         © {year} Reava. All rights reserved.
       </Text>
     </View>

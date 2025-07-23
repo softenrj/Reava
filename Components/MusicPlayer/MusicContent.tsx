@@ -25,7 +25,7 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import { Avatar, ScrollView, Text, View, XStack } from 'tamagui';
+import { Image, ScrollView, Text, View, XStack } from 'tamagui';
 
 export default function MusicContent({ listTrigger }: { listTrigger: () => void }) {
     const [isLike, setLike] = React.useState(false);
@@ -181,15 +181,12 @@ export default function MusicContent({ listTrigger }: { listTrigger: () => void 
                 </XStack>
 
                 {/* Song Details */}
-                <View alignItems="center" marginBottom={20}>
-                    <Avatar circular size="$12">
-                        <Avatar.Image src={currentMusic?.imagePath || require('@/assets/images/default.jpeg')} />
-                        <Avatar.Fallback backgroundColor="gray" />
-                    </Avatar>
+                <View alignItems="center">
+                    <Image src={currentMusic?.imagePath || require('@/assets/images/default.jpeg')} width={180} height={180} borderRadius={10} />
                     <Text color="white" fontWeight="700" textAlign='center' fontSize="$7" marginTop={10}>
-                        {currentMusic?.title}
+                        {currentMusic?.title} 
                     </Text>
-                    <Text color="gray" fontSize="$5">😁🙌🍁❤️</Text>
+                    <Text color="gray" fontSize="$5">🙌🍁❤️</Text>
                 </View>
 
                 {/* Control Icons */}

@@ -56,7 +56,7 @@ export default function MusicPlayer({ toggle }: { toggle?: () => void }) {
           bottom: 0,
           right: 0,
           zIndex: 50,
-          borderRadius: 20
+          backgroundColor: 'rgba(255, 255, 255, 1)',
         },
       ]}
     >
@@ -73,7 +73,7 @@ export default function MusicPlayer({ toggle }: { toggle?: () => void }) {
             left: 0,
             bottom: 0,
             right: 0,
-            borderRadius: 20
+            borderRadius: 16
           }}
           useNativeControls={false}
           resizeMode={ResizeMode.COVER}

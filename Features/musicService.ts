@@ -41,7 +41,7 @@ export const setMusic = (music: IMusic, autoPlay: boolean) => {
             id: music._id,
             url: music.audioPath,
             title: music.title,
-            artwork: music.imagePath || require('@/assets/images/default.jpeg'),
+            artwork: music.imagePath || require('@/assets/images/default-m.jpeg'),
             artist: 'Artist -😁',
         };
         AudioPro.play(musicObj, { autoPlay });

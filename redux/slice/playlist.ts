@@ -34,10 +34,10 @@ const playListSlice = createSlice({
       state.current = state.list[action.payload];
     },
     setMusicById(state, action: PayloadAction<string>) {
-      const musicidx = state.list.findIndex(item => item._id === action.payload)
-      if (musicidx && musicidx >= 0 && musicidx < state.list.length) {
-        state.current = state.list[musicidx]
-        state.currentMusicIdx = musicidx
+      const musicidx = state.list.findIndex(item => item._id === action.payload);
+      if (musicidx !== -1 && musicidx < state.list.length) {
+        state.current = state.list[musicidx];
+        state.currentMusicIdx = musicidx;
       }
     },
     playSong(state, action: PayloadAction<IMusic>) {
@@ -109,6 +109,9 @@ const playListSlice = createSlice({
         state.current = list[musicidx];
         state.currentMusicIdx = musicidx;
       }
+    },
+    setNewMusic: (state, action: PayloadAction<IMusic>) => {
+      state.list = [action.payload, ...state.list];
     }
 
 
@@ -134,7 +137,8 @@ export const {
   setShuffleMusic,
   updateMusic,
   setMusicById,
-  setPlaylistAndPlay
+  setPlaylistAndPlay,
+  setNewMusic
 } = playListSlice.actions;
 
 export default playListSlice.reducer;

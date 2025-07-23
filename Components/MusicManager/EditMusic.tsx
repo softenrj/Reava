@@ -5,20 +5,26 @@ import { removeMusic, updateMusic } from '@/redux/slice/music'
 import { IMusic } from '@/types/music'
 import { API_PATCH_MUSIC, API_REMOVE_MUSIC } from '@/utils/api/APIConstant'
 import { deleteApi, patchApi } from '@/utils/endPoints/common'
-import { useQueryClient } from '@tanstack/react-query'
 import { Video } from 'expo-av'
 import * as DocumentPicker from 'expo-document-picker'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import { FileAudio, ImageIcon, Pencil, Save, Trash2, VideoIcon, X } from 'lucide-react-native'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { ToastAndroid } from 'react-native'
 import {
   Button,
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+  Fieldset,
   Image,
+  Input,
+  Label,
   ScrollView,
-  Sheet,
   Text,
-  TextArea,
+  Unspaced,
   XStack,
-  YStack
+  YStack,
 } from 'tamagui'
 
 type Props = {
@@ -29,221 +35,193 @@ type Props = {
 }
 
 interface Doc {
-  audio: DocumentPicker.DocumentPickerAsset,
-  video: DocumentPicker.DocumentPickerAsset,
-  image: DocumentPicker.DocumentPickerAsset,
-  lyrics: DocumentPicker.DocumentPickerAsset
+  audio: DocumentPicker.DocumentPickerAsset
+  video: DocumentPicker.DocumentPickerAsset
+  image: DocumentPicker.DocumentPickerAsset
 }
 
-export default function EditMusic({ open, setOpen, initialData, setMusicNull }: Props) {
+export default function EditMusicDialog({ open, setOpen, initialData, setMusicNull }: Props) {
   const [audio, setAudio] = useState(initialData.audioPath)
   const [video, setVideo] = useState(initialData.videoPath)
   const [image, setImage] = useState(initialData.imagePath)
   const [title, setTitle] = useState(initialData.title)
-  const [isLoading, setLoading] = useState<boolean>(false)
+  const [isLoading, setLoading] = useState(false)
   const [files, setFiles] = useState<Partial<Doc>>({})
-  const dispatch = useAppDispatch();
-  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch()
+  const [showMedia, setShowMedia] = useState(false)
 
+  useEffect(() => {
+    if (open) {
+      const timeout = setTimeout(() => setShowMedia(true), 300)
+      return () => clearTimeout(timeout)
+    } else {
+      setShowMedia(false)
+    }
+  }, [open])
 
   const pickFile = async (type: 'audio/*' | 'image/*' | 'video/*') => {
-    const result = await DocumentPicker.getDocumentAsync({
-      multiple: false,
-      type,
-    })
+    const result = await DocumentPicker.getDocumentAsync({ multiple: false, type })
     if (!result.canceled && result.assets?.length > 0) {
       const file = result.assets[0]
       if (type === 'audio/*') {
         setAudio(file.uri)
-        setFiles({ ...files, audio: file })
-      }
-      else if (type === 'video/*') {
+        setFiles(prev => ({ ...prev, audio: file }))
+      } else if (type === 'video/*') {
         setVideo(file.uri)
-        setFiles({ ...files, video: file })
-      }
-      else if (type === 'image/*') {
+        setFiles(prev => ({ ...prev, video: file }))
+      } else if (type === 'image/*') {
         setImage(file.uri)
-        setFiles({ ...files, image: file })
+        setFiles(prev => ({ ...prev, image: file }))
       }
     }
   }
 
-
   const handleEdit = async () => {
-    try {
-      setLoading(true);
-      if (!title || !audio) {
-        alert("Title and Audio are required.");
-        setLoading(false);
-        return;
-      }
+    setLoading(true)
 
+    if (!title || !(audio || files.audio?.uri)) {
+      alert('Title and audio are required')
+      setLoading(false)
+      return
+    }
+
+    try {
       const [audioPath, videoPath, imagePath, duration] = await Promise.all([
-        moveToPermanentStorage(files?.audio ? files.audio : null),
-        moveToPermanentStorage(files?.video ? files.video : null),
-        moveToPermanentStorage(files?.image ? files.image : null),
-        getAudioDuration(files?.audio?.uri ?? audio),
-      ]);
+        files.audio ? moveToPermanentStorage(files.audio) : Promise.resolve(initialData.audioPath),
+        files.video ? moveToPermanentStorage(files.video) : Promise.resolve(initialData.videoPath),
+        files.image ? moveToPermanentStorage(files.image) : Promise.resolve(initialData.imagePath),
+        getAudioDuration(files.audio?.uri || initialData.audioPath),
+      ])
 
       const values: Record<string, string | number> = {
-        title: title || (files?.audio?.name ?? '') || "Untitled",
+        title,
         audioPath,
-        duration: duration
-      };
-
-      if (videoPath) values.videoPath = videoPath;
-      if (imagePath) values.imagePath = imagePath;
-
-      const addedMusic = await patchApi({
-        url: API_PATCH_MUSIC + `/${initialData._id}`,
-        values
-      });
-
-      if (addedMusic) {
-        dispatch(updateMusic(addedMusic as IMusic))
-        queryClient.setQueryData(['recentlyPlayed'], (old: IMusic[] = []) =>
-          old.map(item => item._id === initialData._id ? addedMusic : item)
-        );
-
-        queryClient.setQueryData(['topPlayed'], (old: IMusic[] = []) =>
-          old.map(item => item._id === initialData._id ? addedMusic : item)
-        );
+        duration,
+        videoPath,
+        imagePath,
       }
-      ToastAndroid.show('Doen 👌❄️ ( My Music )', 50)
-      setOpen(false);
-      setLoading(false);
+
+      const updated = await patchApi({
+        url: `${API_PATCH_MUSIC}/${initialData._id}`,
+        values,
+      })
+
+      if (updated) {
+        dispatch(updateMusic(updated as IMusic))
+        ToastAndroid.show('Music updated 🎵', ToastAndroid.SHORT)
+        setOpen(false)
+        setMusicNull(null)
+      }
     } catch (err) {
-      console.error("Failed to upload music", err);
-      setLoading(false);
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
-  };
+  }
+
 
   const handleRemove = async () => {
     try {
-      await deleteApi({
-        url: API_REMOVE_MUSIC + `/${initialData._id}`,
-      })
+      await deleteApi({ url: API_REMOVE_MUSIC + `/${initialData._id}` })
       dispatch(removeMusic(initialData._id))
-      queryClient.setQueryData(['recentlyPlayed'], (old: IMusic[] = []) =>
-        old.filter(item => item._id !== initialData._id)
-      );
-
-      queryClient.setQueryData(['topPlayed'], (old: IMusic[] = []) =>
-        old.filter(item => item._id !== initialData._id)
-      );
-      setOpen(false);
+      setOpen(false)
     } catch (err) {
-      console.error("Failed to remove music", err);
+      console.error(err)
     }
   }
 
-  const handleChange = (e: any) => {
-    setMusicNull(null)
-    setOpen(e)
-  }
-
   return (
-    <Sheet
-      open={open}
-      onOpenChange={handleChange}
-      modal
-      dismissOnSnapToBottom
-      snapPoints={[70]}
-      position={0}
-    >
-      <Sheet.Overlay backgroundColor="rgba(0,0,0,0.3)" fullscreen />
-      <Sheet.Handle />
-      <Sheet.Frame padding="$4" backgroundColor="#fff">
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <YStack gap="$4" padding="$2" backgroundColor="#fff" borderRadius="$4" shadowColor="#000" shadowOpacity={0.08} shadowRadius={10}>
-            <Text fontSize={24} fontWeight="800" textAlign="center" color="#111">
-              ✏️ Edit Music
-            </Text>
-
-            <YStack gap="$2">
-              <Text fontSize={16} fontWeight="700" color="#222">📝 Title</Text>
-              <TextArea
-                placeholder="Enter title"
-                value={title}
-                onChangeText={setTitle}
-                backgroundColor="#f9f9f9"
-                borderColor="#ccc"
-                borderWidth={1}
-                borderRadius={10}
-                padding="$3"
-                color="#111"
-              />
-            </YStack>
-
-            {/* Audio */}
-            <YStack gap="$2">
-              <Text fontSize={16} fontWeight="700" color="#222">🎧 Audio File</Text>
-              <XStack gap="$2" alignItems="center" flexWrap="wrap">
-                <Button theme="blue" borderRadius="$3" onPress={() => pickFile('audio/*')}>Change</Button>
-                {audio && (
-                  <>
-                    <Text fontSize={14} color="#888">{audio}</Text>
-                    <Button size="$2" theme="red" borderRadius="$3" onPress={() => setAudio('')}>🗑️</Button>
-                  </>
-                )}
-              </XStack>
-            </YStack>
-
-            {/* Video */}
-            <YStack gap="$2">
-              <Text fontSize={16} fontWeight="700" color="#222">🎬 Background Video</Text>
-              <XStack gap="$2" alignItems="center">
-                <Button theme="blue" borderRadius="$3" onPress={() => pickFile('video/*')}>Change</Button>
-                {video && (
-                  <Button size="$2" theme="red" borderRadius="$3" onPress={() => setVideo('')}>🗑️</Button>
-                )}
-              </XStack>
-              {video && (
-                <Video
-                  source={{ uri: video }}
-                  useNativeControls
-                  style={{
-                    width: '100%',
-                    height: 160,
-                    marginTop: 10,
-                    borderRadius: 10,
-                    overflow: 'hidden',
-                  }}
-                />
-              )}
-            </YStack>
-
-            {/* Cover Image */}
-            <YStack gap="$2">
-              <Text fontSize={16} fontWeight="700" color="#222">🖼️ Cover Image</Text>
-              <XStack gap="$2" alignItems="center">
-                <Button theme="blue" borderRadius="$3" onPress={() => pickFile('image/*')}>Change</Button>
-                {image && (
-                  <Button size="$2" theme="red" borderRadius="$3" onPress={() => setImage('')}>🗑️</Button>
-                )}
-              </XStack>
-              {image && (
-                <Image
-                  source={{ uri: image }}
-                  width="100%"
-                  height={120}
-                  borderRadius={10}
-                  resizeMode="cover"
-                  marginTop={10}
-                />
-              )}
-            </YStack>
-
-            {/* Actions */}
-            <XStack justifyContent="space-between" marginTop="$4">
-              <Button theme="gray" borderRadius="$3" onPress={() => setOpen(false)}>Cancel</Button>
-              <Button theme="red" borderRadius="$3" onPress={handleRemove}>delete</Button>
-              <Button theme="green" borderRadius="$3" disabled={isLoading} onPress={handleEdit}>{
-                isLoading ? "Saving.." : "Save Changes"}</Button>
+    <Dialog open={open} onOpenChange={setOpen} modal>
+      <Dialog.Portal>
+        <DialogOverlay key="edit-overlay" backgroundColor="rgba(0,0,0,0.4)" />
+        <DialogContent
+          bordered
+          elevate
+          borderRadius="$6"
+          padding="$5"
+          width="90%"
+          maxWidth={500}
+          backgroundColor="#fff"
+          animation="medium"
+          enterStyle={{ y: 10, opacity: 0 }}
+          exitStyle={{ y: 10, opacity: 0, scale: 0.95 }}
+        >
+          <XStack alignItems="center" justifyContent="space-between">
+            <XStack alignItems="center" gap="$2">
+              <Pencil size={20} color="#4C51BF" />
+              <DialogTitle fontSize={18} fontWeight="700">
+                Edit Music
+              </DialogTitle>
             </XStack>
-          </YStack>
-        </ScrollView>
-      </Sheet.Frame>
-    </Sheet>
+            <Unspaced>
+              <Dialog.Close asChild>
+                <Button icon={X} size="$2" circular variant="outlined" />
+              </Dialog.Close>
+            </Unspaced>
+          </XStack>
+
+          <ScrollView
+            style={{ maxHeight: 400 }}
+            contentContainerStyle={{ paddingBottom: 16 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <YStack gap="$4">
+              <Fieldset>
+                <Label>Title</Label>
+                <Input value={title} onChangeText={setTitle} />
+              </Fieldset>
+
+              <Fieldset>
+                <Label>Audio File</Label>
+                <Button icon={FileAudio} onPress={() => pickFile('audio/*')}>
+                  Change Audio
+                </Button>
+                {audio && <Text color="#666">{audio}</Text>}
+              </Fieldset>
+
+              <Fieldset>
+                <Label>Background Video</Label>
+                <Button icon={VideoIcon} onPress={() => pickFile('video/*')}>
+                  Change Video
+                </Button>
+                {showMedia && video && (
+                  <Video
+                    source={{ uri: video }}
+                    useNativeControls
+                    style={{ width: '100%', height: 160, borderRadius: 10, marginTop: 10 }}
+                  />
+                )}
+              </Fieldset>
+
+              <Fieldset>
+                <Label>Cover Image</Label>
+                <Button icon={ImageIcon} onPress={() => pickFile('image/*')}>
+                  Change Image
+                </Button>
+                {showMedia && image && (
+                  <Image
+                    source={{ uri: image }}
+                    width="100%"
+                    height={120}
+                    borderRadius={10}
+                    resizeMode="cover"
+                    marginTop={10}
+                  />
+                )}
+              </Fieldset>
+
+              <XStack justifyContent="space-between" gap={8} marginTop="$4">
+                <Button icon={Trash2} theme="red" onPress={handleRemove}>
+                  Delete
+                </Button>
+                <Button icon={isLoading ? undefined : Save} theme="green" onPress={handleEdit} disabled={isLoading}>
+                  {isLoading ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </XStack>
+            </YStack>
+          </ScrollView>
+        </DialogContent>
+      </Dialog.Portal>
+    </Dialog>
   )
 }

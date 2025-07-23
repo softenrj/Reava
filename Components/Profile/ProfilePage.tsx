@@ -10,19 +10,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 import {
   BadgeCheck,
   Crown,
-  Disc,
   Flame,
   Gem,
   Headphones,
   Medal,
   PauseCircle,
   PlayCircle,
-  Trophy
+  Trophy,
+  User2
 } from 'lucide-react-native';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { AudioPro, useAudioPro } from 'react-native-audio-pro';
-import { View } from 'tamagui';
+import { Heading, View, XStack } from 'tamagui';
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -60,7 +60,7 @@ export default function ProfilePage() {
 
   const isplaying = (id: string): boolean => {
     return !(currentplaylist.current?._id === id && state === "PLAYING");
-  } 
+  }
 
   React.useEffect(() => {
     fetchUserProfile();
@@ -70,9 +70,12 @@ export default function ProfilePage() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>Profile</Text>
-        </View>
+        <XStack alignItems="center" gap="$2">
+          <User2 size={26} color="#444" />
+          <Heading fontWeight="700" size="$7" color="rgba(10, 0, 73, 1)">
+            Settings
+          </Heading>
+        </XStack>
       </View>
 
       {/* User Profile Section */}
@@ -80,9 +83,11 @@ export default function ProfilePage() {
         <View style={styles.avatarContainer}>
           <View style={styles.avatarWrapper}>
             <Image
-              source={{
-                uri: userProfile?.profile || "https://files.idyllic.app/files/static/2618800"
-              }}
+              source={
+                userProfile?.profile
+                  ? { uri: userProfile.profile }
+                  : require('@/assets/images/default-pic.jpg')
+              }
               style={styles.avatar}
             />
             <View style={styles.premiumBadge}>
@@ -194,18 +199,16 @@ export default function ProfilePage() {
         <View style={styles.tracksContainer}>
           {recentlyPlayed && recentlyPlayed.map((item, index) => (
             <View key={index} style={styles.trackItem}>
-              <View style={styles.trackArt}>
-                <Disc size={24} color="#8E2DE2" />
-              </View>
-              <View style={styles.trackInfo}>
+              <Image src={item.imagePath} height={45} width={45} borderRadius={4} />
+              <View style={styles.trackInfo} marginLeft={10}>
                 <Text style={styles.trackTitle}>{item.title}</Text>
-                <Text style={styles.trackArtist}>😁🍁🙌</Text>
+                <Text style={styles.trackArtist}>Played: {item.played} times</Text>
               </View>
               <Text style={styles.trackTime}>{FormattedAudio(item.duration)}</Text>
               <TouchableOpacity style={styles.playButton} onPress={() => handlePlay(item._id)}>
                 {
-                  isplaying(item._id) ? <PlayCircle size={24} color="#8E2DE2" />:
-                <PauseCircle size={24} color="#8E2DE2" />
+                  isplaying(item._id) ? <PlayCircle size={24} color="#8E2DE2" /> :
+                    <PauseCircle size={24} color="#8E2DE2" />
                 }
               </TouchableOpacity>
             </View>
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 10,
     paddingTop: 10,
     backgroundColor: '#FFFFFF',
   },

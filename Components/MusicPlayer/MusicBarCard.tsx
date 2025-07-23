@@ -55,23 +55,23 @@ export default function MusicBarCard({ toggle, content }: { toggle: (type: strin
         alignItems="center"
         flex={1}
       >
-        <Avatar size="$5" borderRadius="$6" onPress={() => toggle('musicPlayer')} cursor="pointer">
-          <Avatar.Image src={content.imagePath || require('@/assets/images/default.jpeg')} />
+        <Avatar size="$6" borderRadius="$6" onPress={() => toggle('musicPlayer')} cursor="pointer">
+          <Avatar.Image src={content.imagePath || require('@/assets/images/default-m.jpeg')} />
           <Avatar.Fallback borderColor="red" />
         </Avatar>
 
         <View alignItems="flex-start">
-          <Text color="white" fontSize="$3" maxWidth={'90%'} numberOfLines={2}>
+          <Text color="white" fontSize="$3" maxWidth={'85%'} numberOfLines={1}>
             {content.title}
           </Text>
 
-          <View flexDirection="row" alignItems="center" gap="$0">
+          <View flexDirection="row" alignItems="center">
             <Text color="white">{FormattedAudio(position)}</Text>
             <Slider
-              style={{ height: 24, width: 180 }}
+              style={{ height: 28, width: 160 }}
               minimumValue={0}
               maximumValue={content?.duration || 100}
-              minimumTrackTintColor="#FFFFFF"
+              minimumTrackTintColor="#ff00c3ff"
               maximumTrackTintColor="#999"
               thumbTintColor="#fff"
               value={position}

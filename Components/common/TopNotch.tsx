@@ -41,7 +41,7 @@ export default function TopNotch({ toggle }: { toggle: (topNotch: string) => voi
         .onEnd(() => {
             // If it's moved too far off screen vertically or horizontally, dismiss it
             const tooFar =
-                Math.abs(translateX.value) > width / 2 || Math.abs(translateY.value) > height / 2
+                Math.abs(translateX.value) > width / 4 || Math.abs(translateY.value) > height / 4
 
             if (tooFar) {
                 runOnJS(dismiss)()
@@ -83,6 +83,7 @@ export default function TopNotch({ toggle }: { toggle: (topNotch: string) => voi
                     flexDirection="row"
                     alignItems="center"
                     gap={2}
+                    onLongPress={dismiss}
                 >
                     <Avatar size={'$2'} circular cursor="pointer">
                         <Avatar.Image src={currentMusic?.imagePath || require('@/assets/images/default.jpeg')} />
@@ -107,15 +108,15 @@ export default function TopNotch({ toggle }: { toggle: (topNotch: string) => voi
                             numberOfLines={1}
                             fontSize={'$1'}
                         >
-                            🍃 {FormattedAudio(duration - position)}
+                            TimeLeft: {FormattedAudio(duration - position)}
                         </Text>
                     </View>
 
                     <LottieView
-                        source={require('@/assets/lottie/wave.json')}
+                        source={require('@/assets/lottie/Electric_guitar_music.json')}
                         autoPlay
                         loop
-                        style={{ width: 40, height: 60 }}
+                        style={{ width: 60, height: 60, marginRight: -18 }}
                     />
                 </View>
             </Animated.View>

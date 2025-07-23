@@ -4,6 +4,7 @@ import { nextSong, prevSong } from '@/redux/slice/playlist'
 import { API_DAILY_VISIT, API_SAVE_MUSIC_PLAY, API_UPDATE_WATCHTIME } from '@/utils/api/APIConstant'
 import { postApi } from '@/utils/endPoints/common'
 import React from 'react'
+import { AudioPro, AudioProState, useAudioPro } from 'react-native-audio-pro'
 import { ScrollView, View } from 'tamagui'
 import Footer from '../common/Footer'
 import MusicBar from '../common/MusicBar'
@@ -13,7 +14,7 @@ import TopNotch from '../common/TopNotch'
 import MusicPlayer from '../MusicPlayer/MusicPlayer'
 import Main from './Main'
 export default function page() {
-  const [isMusicBarOpen, setIsMusicBarOpen] = React.useState(true)
+  const [isMusicBarOpen, setIsMusicBarOpen] = React.useState(false)
   const [musicPlayerOpen, setMusicPlayerOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
   const autoPlay = React.useRef<boolean>(false);
@@ -21,6 +22,7 @@ export default function page() {
   const dailyVisitRef = React.useRef<boolean>(false);
   const lastMusicId = React.useRef<string | null>(null);
   const audioStarted = React.useRef<boolean>(false);
+  const { state } = useAudioPro()
 
 
   const handleToggle = (type: string) => {
@@ -30,9 +32,11 @@ export default function page() {
       setMusicPlayerOpen(!musicPlayerOpen);
     }
   }
+
   const handleOpenMusicPlayer = () => {
     setMusicPlayerOpen(!musicPlayerOpen);
   }
+
   const handleDailyVisit = async () => {
     await postApi({
       url: API_DAILY_VISIT
@@ -70,14 +74,18 @@ export default function page() {
 
   React.useEffect(() => {
     if (!currentMusic?.audioPath) return;
-
-    if (lastMusicId.current === currentMusic._id && audioStarted.current) return;
-
+    if (lastMusicId.current === currentMusic._id && audioStarted.current) {
+      if (state === AudioProState.PAUSED) {
+        AudioPro.resume();
+      }
+      return ;
+    }
     lastMusicId.current = currentMusic._id;
     setMusic(currentMusic, autoPlay.current);
     autoPlay.current = true;
     audioStarted.current = true;
     handleSaveLog(currentMusic._id);
+    setIsMusicBarOpen(true)
   }, [currentMusic?._id]);
 
 
@@ -88,7 +96,7 @@ export default function page() {
 
   return (
     <View background={'$backgroundStrong'}>
-      {!isMusicBarOpen && <TopNotch toggle={handleToggle} />}
+      {!isMusicBarOpen && currentMusic?.audioPath && <TopNotch toggle={handleToggle} />}
       {musicPlayerOpen && <MusicPlayer toggle={handleOpenMusicPlayer} />}
       {searchOpen && <SearchPanel onClose={handleSearchOpen} />}
       <ScrollView showsVerticalScrollIndicator={false}>

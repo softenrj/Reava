@@ -1,13 +1,13 @@
 import { FormattedAudio } from '@/Features/hooks/getAudioDurationFormatted'
 import { useAppSelector } from '@/Features/hooks/redux'
 import { IMusic } from '@/types/music'
-import { BadgePlus, PencilRuler } from 'lucide-react-native'
+import { BadgePlus, Command, Settings2 } from 'lucide-react-native'
 import React, { useState } from 'react'
 import { Pressable } from 'react-native'
 import {
-  Avatar,
   Button,
   Heading,
+  Image,
   ScrollView,
   Stack,
   Text,
@@ -32,39 +32,43 @@ export default function Manager() {
 
   return (
     <ScrollView padding={8} showsVerticalScrollIndicator={false} height={'100%'}>
-      <XStack alignItems='center' justifyContent='space-between'>
-        <Heading fontSize={24} fontWeight={'800'} color={'#333333'}>Music Manager</Heading>
+      <XStack alignItems='center' justifyContent='space-between' paddingBottom={'$2'}>
+        <XStack alignItems="center" gap="$2">
+          <Command size={26} color="#444" />
+          <Heading fontWeight="700" size="$7" color="rgba(10, 0, 73, 1)">
+            Manager
+          </Heading>
+        </XStack>
         <Button icon={BadgePlus} variant='outlined' onPress={() => setAddMusicOpen(true)}>Add More</Button>
       </XStack>
 
       <Stack paddingTop={8} gap={6}>
-        {music && Array.isArray(music) && music.map((item) => (
+        {music && Array.isArray(music) && music.map((item, key) => (
           <View
-            key={item._id}
+            key={`${item.title}-${item.audioPath}-${key}`}
             borderWidth={1}
             borderColor={'#8888'}
-            padding={12}
+            padding={8}
             borderRadius={12}
             flexDirection="row"
             alignItems="center"
             gap={12}
             marginTop={5}
           >
-            <Avatar borderRadius={12} size="$6">
-              <Avatar.Image
-                src={item.imagePath || require('@/assets/images/default.jpeg')}
-                alt="Playlist Cover"
-              />
-              <Avatar.Fallback backgroundColor="gray" />
-            </Avatar>
+            <Image
+              source={
+                item?.imagePath
+                  ? { uri: item.imagePath }
+                  : require('@/assets/images/default-m.jpeg')
+              } width={65} height={65} borderRadius={12} />
 
             <Stack flex={1}>
-              <Text fontWeight="600" fontSize={18}>{item.title}</Text>
-              <Text fontSize={14}>Duration: {FormattedAudio(item.duration)}</Text>
+              <Text fontWeight="600" fontSize={18} numberOfLines={2} maxWidth={'90%'}>{item.title}</Text>
+              <Text fontSize={14} color={'rgba(0, 0, 0, 0.75)'}>Duration: {FormattedAudio(item.duration)}</Text>
             </Stack>
 
             <Pressable onPress={() => handleMusicEdit(item)}>
-              <PencilRuler size={24} color={'#8E2DE2'} />
+              <Settings2 size={24} color={'#120083dc'} />
             </Pressable>
           </View>
         ))}

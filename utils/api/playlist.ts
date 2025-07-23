@@ -4,6 +4,7 @@ import { getApi } from "../endPoints/common";
 import {
   API_GET_MUSIC_LIST,
   API_GET_RECENTLY_PLAYED,
+  API_GET_SUGGESTION,
   API_GET_TOP_PLAYED,
 } from "./APIConstant";
 
@@ -32,13 +33,22 @@ export const getTopPlayed = async (): Promise<IMusic[]> => {
   return response || [];
 };
 
+// Ai Suggestion 
+export const getAiSuggestion = async (): Promise<IMusic[]> => {
+  const AIResult = await getApi<{ message: string, data: IMusic[] }>({
+    url: API_GET_SUGGESTION
+  })
+  if (AIResult?.data) {
+    return AIResult.data
+  }
+  return [];
+}
 
 
 export const useMyMusic = () => {
   return useQuery({
     queryKey: ["myMusic"],
     queryFn: getMyMusic,
-    staleTime: 1000 * 60 * 1, 
   });
 };
 
@@ -46,7 +56,6 @@ export const useRecentlyPlayed = () => {
   return useQuery({
     queryKey: ["recentlyPlayed"],
     queryFn: getRecentlyPlayed,
-    staleTime: 1000 * 60 * 1,
   });
 };
 
@@ -54,6 +63,12 @@ export const useTopPlayed = () => {
   return useQuery({
     queryKey: ["topPlayed"],
     queryFn: getTopPlayed,
-    staleTime: 1000 * 60 * 1,
   });
 };
+
+export const useAiSuggestion = () => {
+  return useQuery({
+    queryKey: ["aiSuggestion"],
+    queryFn: getAiSuggestion,
+  })
+}
