@@ -20,9 +20,9 @@ import {
   User2
 } from 'lucide-react-native';
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { AudioPro, useAudioPro } from 'react-native-audio-pro';
-import { Heading, View, XStack } from 'tamagui';
+import { Heading, Image, View, XStack } from 'tamagui';
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -199,7 +199,7 @@ export default function ProfilePage() {
         <View style={styles.tracksContainer}>
           {recentlyPlayed && recentlyPlayed.map((item, index) => (
             <View key={index} style={styles.trackItem}>
-              <Image src={item.imagePath} height={45} width={45} borderRadius={4} />
+              <Image source={item?.imagePath ? { uri: item.imagePath } : require('@/assets/images/default-m.jpeg')} height={60} width={60} borderRadius={8} />
               <View style={styles.trackInfo} marginLeft={10}>
                 <Text style={styles.trackTitle}>{item.title}</Text>
                 <Text style={styles.trackArtist}>Played: {item.played} times</Text>

@@ -18,7 +18,7 @@ const SliderCard: React.FC<{music: IMusic, handleList: () => void}> = ({music, h
   
   return (
     <View alignItems='center' onPress={handlePlay} pressStyle={{ scale: 0.98 }}>
-        <Image src={music?.imagePath || require('@/assets/images/default-m.jpeg')} height={250} width={250} borderRadius={20} />
+        <Image src={music?.imagePath || require('@/assets/images/default-m.jpeg')} height={220} width={220} borderRadius={20} />
         <Text fontSize={'$7'} marginTop={10} fontWeight={'800'} numberOfLines={2} maxWidth={'60%'} textAlign='center' textOverflow='inherit'>{music.title}</Text>
     </View>
   )

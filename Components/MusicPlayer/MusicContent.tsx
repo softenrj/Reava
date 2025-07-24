@@ -182,7 +182,7 @@ export default function MusicContent({ listTrigger }: { listTrigger: () => void 
 
                 {/* Song Details */}
                 <View alignItems="center">
-                    <Image src={currentMusic?.imagePath || require('@/assets/images/default.jpeg')} width={180} height={180} borderRadius={10} />
+                    <Image src={currentMusic?.imagePath || require('@/assets/images/default-m.jpeg')} width={180} height={180} borderRadius={10} />
                     <Text color="white" fontWeight="700" textAlign='center' fontSize="$7" marginTop={10}>
                         {currentMusic?.title} 
                     </Text>

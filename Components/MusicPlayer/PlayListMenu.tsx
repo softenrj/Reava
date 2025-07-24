@@ -1,16 +1,16 @@
 import { FormattedAudio } from '@/Features/hooks/getAudioDurationFormatted';
 import { useAppDispatch, useAppSelector } from '@/Features/hooks/redux';
-import { playIndexSong } from '@/redux/slice/playlist';
+import { playIndexSong, setMusicById } from '@/redux/slice/playlist';
 import { Minimize } from 'lucide-react-native';
 import React from 'react';
 import { useAudioPro } from 'react-native-audio-pro';
 import Animated, {
-    Easing,
-    useAnimatedStyle,
-    useSharedValue,
-    withDelay,
-    withRepeat,
-    withTiming,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withTiming,
 } from 'react-native-reanimated';
 import { Avatar, ScrollView, Stack, Text, View, XStack } from 'tamagui';
 
@@ -46,11 +46,9 @@ export default function PlayListMenu({ trigger }: { trigger: () => void }) {
     trigger();
   };
 
-  const handlePlay = (idx: number) => {
-    if (currentPlayList.currentMusicIdx !== idx) {
-      dispatch(playIndexSong(idx));
-    }
-  };
+  const handlePlay = (id: string) => {
+      dispatch(setMusicById(id))
+  }
 
   const isPlaying = React.useCallback(
     (id: string) => currentPlayList.current?._id === id && state === 'PLAYING',
@@ -131,7 +129,7 @@ export default function PlayListMenu({ trigger }: { trigger: () => void }) {
             return (
               <Animated.View key={item._id + index} style={[itemStyle]}>
                 <View
-                  onPress={() => handlePlay(index)}
+                  onPress={() => handlePlay(item._id)}
                   backgroundColor="#fff"
                   padding={12}
                   marginTop={12}
@@ -148,7 +146,7 @@ export default function PlayListMenu({ trigger }: { trigger: () => void }) {
                 >
                   <Avatar borderRadius={14} size="$5">
                     <Avatar.Image
-                      src={item.imagePath || require('@/assets/images/default.jpeg')}
+                      src={item.imagePath || require('@/assets/images/default-m.jpeg')}
                       alt="cover"
                     />
                     <Avatar.Fallback backgroundColor="#ddd" />

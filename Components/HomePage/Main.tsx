@@ -8,7 +8,7 @@ import TopPlayedBoard from '../common/TopPlayedSection/TopPlayedBoard'
 export default function Main() {
   const user = useAppSelector(state => state.profileSlice)
   return (
-    <View>
+    <View minHeight={200}>
       <View marginTop="$4" paddingHorizontal={'$2'} overflow='hidden' width="100%" height="$16" shadowColor="#aaa" shadowOffset={{ width: 4, height: 8 }} shadowOpacity={0.2} elevationAndroid={16}>
         <Image
           objectFit="cover"

@@ -18,40 +18,40 @@ const MusicTabs: React.FC<{ name: string, music: IMusic[], isLoading?: boolean, 
     if (currentPlayList.name === name) {
       dispatch(setMusicById(id))
     } else {
-      dispatch(setPlaylistAndPlay({list: music, id: id, name: name}))
+      dispatch(setPlaylistAndPlay({ list: music, id: id, name: name }))
     }
   }
 
   if (!Array.isArray(music) || music.length === 0) {
     return (
       <>
-      {name.toLocaleLowerCase().trim() === "suggestions" &&
-        <View>
-          {isLoading && <XStack alignItems="center" justifyContent='center' gap="$3" padding="$2">
-            <LottieView
-              source={require('@/assets/lottie/ai.json')}
-              loop
-              autoPlay
-              style={{ width: 160, height: 160 }}
-            />
+        {name.toLocaleLowerCase().trim() === "suggestions" &&
+          <View>
+            {isLoading && <XStack alignItems="center" justifyContent='center' gap="$3" padding="$2">
+              <LottieView
+                source={require('@/assets/lottie/ai.json')}
+                loop
+                autoPlay
+                style={{ width: 160, height: 160 }}
+              />
 
 
-          </XStack>}
-          {!isLoading && (
-            <XStack alignItems="center" gap="$2" marginBottom={10} onPress={handleRefresh}>
-              <RefreshCcw size={18} color="#333" />
-              <Text fontSize="$6" fontWeight="800" color="rgba(0, 0, 97, 1)">
-                Reload
-              </Text>
-            </XStack>
-          )}
-        </View>
-      }
-      <View padding="$4" alignItems="center" justifyContent="center">
-        <Text fontSize="$6" color="#888">
-          No music found in {name}
-        </Text>
-      </View></>
+            </XStack>}
+            {!isLoading && (
+              <XStack alignItems="center" gap="$2" marginBottom={10} onPress={handleRefresh}>
+                <RefreshCcw size={18} color="#333" />
+                <Text fontSize="$6" fontWeight="800" color="rgba(0, 0, 97, 1)">
+                  Reload
+                </Text>
+              </XStack>
+            )}
+          </View>
+        }
+        <View padding="$4" alignItems="center" justifyContent="center">
+          <Text fontSize="$6" color="#888">
+            No music found in {name}
+          </Text>
+        </View></>
     )
   }
 
@@ -81,61 +81,59 @@ const MusicTabs: React.FC<{ name: string, music: IMusic[], isLoading?: boolean, 
       }
 
       {!isLoading && music.map((item, key) => (
-        <View onPress={() => handlePlay(item._id)} pressStyle={{scale: 0.98}} key={key}>
-          <LinearGradient
+        <View
           key={key}
-          colors={['#090021ff', '#0d002de8', '#0d002de2']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            width: width * 0.86,
-            padding: 16,
-            borderRadius: 12,
-            marginBottom: 16,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 16,
-            shadowColor: '#000',
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 6 }
-          }}
+          onPress={() => handlePlay(item._id)}
+          pressStyle={{ scale: 0.98 }}
         >
-          <Image
-            src={item.imagePath ? item.imagePath : require('@/assets/images/default-m.jpeg')}
-            height={80}
-            width={80}
-            borderRadius={18}
-            resizeMode="cover"
-          />
+          <YStack
+            width={width * 0.86}
+            padding={8}
+            borderRadius={16}
+            marginBottom={16}
+            backgroundColor="#fff"
+            borderColor={'rgba(129, 136, 166, 0.51)'}
+            borderWidth={1}
+            flexDirection="row"
+            alignItems="center"
+            gap={16}
+          >
+            <Image
+              src={item.imagePath || require('@/assets/images/default-m.jpeg')}
+              height={80}
+              width={80}
+              borderRadius={16}
+              resizeMode="cover"
+            />
 
-          <YStack flex={1} gap="$2">
-            <Text fontSize="$6" maxWidth={'200'} fontWeight="700" color="white" numberOfLines={1}>
-              {item.title}
-            </Text>
-
-            <XStack gap="$4" flexWrap="wrap">
-              <XStack gap="$1" alignItems="center">
-                <Play size={16} color="#ffffffcc" />
-                <Text fontSize="$2" color="#f1f1f1">
-                  {item.played} plays
-                </Text>
-              </XStack>
-
-              <XStack gap="$1" alignItems="center">
-                <Heart size={16} color={item.isLiked ? '#ffb3c6' : '#ccc'} />
-                <Text fontSize="$2" color="#f1f1f1">
-                  {item.isLiked ? 'Liked' : 'Not liked'}
-                </Text>
-              </XStack>
-
-              <Text fontSize="$2" color="#f1f1f1">
-                ⏱ {FormattedAudio(item.duration)}
+            <YStack flex={1} gap="$2">
+              <Text
+                fontSize="$6"
+                maxWidth="200"
+                fontWeight="700"
+                color="#1a1a1a"
+                numberOfLines={1}
+              >
+                {item.title}
               </Text>
-            </XStack>
+
+              <XStack gap="$4" flexWrap="wrap">
+
+                <XStack gap="$1" alignItems="center">
+                  <Heart size={16} color={item.isLiked ? '#e91e63' : '#ccc'} />
+                  <Text fontSize="$2" color={item.isLiked ? '#e91e63' : '#888'}>
+                    {item.isLiked ? 'Liked' : 'Not liked'}
+                  </Text>
+                </XStack>
+
+                <Text fontSize="$2" color="#666">
+                  ⏱ {FormattedAudio(item.duration)}
+                </Text>
+              </XStack>
+            </YStack>
           </YStack>
-        </LinearGradient>
         </View>
+
       ))}
     </ScrollView>
   )

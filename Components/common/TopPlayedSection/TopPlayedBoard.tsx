@@ -9,10 +9,29 @@ import { Text, View } from 'tamagui';
 import TopPlayedCard from './TopPlayedCard';
 
 const cardGradients = [
-  ['#00022cd8', '#12052ce6', '#22092cff'],
-  ['#2c0038ee', '#470064ff', '#340052cc'],
-  ['#0a0a3de0', '#1f0a5ce0', '#390e7dcc'],
+  [
+    '#0a0a1ae6', // deep midnight blue
+    '#1a1a3d',   // dark steel blue
+    '#2e2e5a',   // muted indigo
+    '#3a3a6b',   // soft blue-grey
+    '#1a1a2f',   // deep fallback
+  ],
+  [
+    '#1b002d',   // deep purple black
+    '#330046',   // eggplant shimmer
+    '#4f0078',   // rich royal purple
+    '#60008e',   // metallic grape
+    '#2e003d',   // soft fallback
+  ],
+  [
+    '#0e0e38',   // dark space blue
+    '#191952',   // night sky
+    '#2c2c75',   // twilight navy
+    '#41418e',   // desaturated violet
+    '#1c1c3a',   // fallback shade
+  ],
 ];
+
 
 
 const TopPlayedBoard = () => {
@@ -38,7 +57,7 @@ const TopPlayedBoard = () => {
   }
 
   return (
-    <View marginVertical="$4">
+    <View marginVertical="$4" marginTop={-15}>
       <View justifyContent="center" alignItems="center">
         <Text fontSize="$9" fontWeight="900" color={'rgba(10, 0, 58, 1)'}>
           Loop Legends
@@ -63,7 +82,7 @@ const TopPlayedBoard = () => {
             parallaxScrollingOffset: 20,
           }}
           renderItem={({ item, index }) => (
-            <TopPlayedCard data={item} gradientColors={cardGradients[index % cardGradients.length]} handleList={() => handleList(item._id)} />
+            <TopPlayedCard data={item} index={index} gradientColors={cardGradients[index % cardGradients.length]} handleList={() => handleList(item._id)} />
           )}
 
         />

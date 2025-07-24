@@ -48,12 +48,12 @@ const HeroSlider = () => {
         width={width * 0.9} // Each card is 70% of screen width
         height={300}
         data={topPlayed}
-        scrollAnimationDuration={1200}
+        scrollAnimationDuration={2400}
         pagingEnabled={false}
         mode="parallax"
         modeConfig={{
           parallaxScrollingScale: 0.9,
-          parallaxScrollingOffset: 140,
+          parallaxScrollingOffset: 180,
           parallaxAdjacentItemScale: 0.6,
         }}
         renderItem={(data) => (

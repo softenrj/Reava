@@ -38,5 +38,6 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
-/Configs/firebaseConfig
+
 /Configs
+Configs
