@@ -1,6 +1,6 @@
-# Music-Menma 🎵🎶
+# Reava 🎵🎶
 
-Welcome to **Music-Menma**, a feature-rich and visually stunning music application designed to deliver an immersive and personalized music experience. This app combines user authentication, dynamic playlists, music management, and a sleek UI to bring your favorite music to life. 🎧✨
+Welcome to **Reava**, a feature-rich and visually stunning music application designed to deliver an immersive and personalized music experience. This app combines user authentication, dynamic playlists, music management, and a sleek UI to bring your favorite music to life. 🎧✨
 
 ---
 
@@ -172,4 +172,4 @@ This project is licensed under the MIT License. 📝
 ---
 });
 
-Enjoy your music journey with Music-Menma! 🎶🚀
+Enjoy your music journey with Reava! 🎶🚀
